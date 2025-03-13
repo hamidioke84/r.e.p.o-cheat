@@ -642,74 +642,84 @@ namespace r.e.p.o_cheat
                             {
                                 itemName = itemName.Substring("Valuable".Length).Trim();
                             }
-                            if (itemName.EndsWith("(Clone)", StringComparison.OrdinalIgnoreCase))
-                            {
-                                itemName = itemName.Substring(0, itemName.Length - "(Clone)".Length).Trim();
-                            }
-                        }
-
-                        int itemValue = 0;
-                        if (!isPlayerDeathHead)
+                        if (itemName.EndsWith("(Clone)", StringComparison.OrdinalIgnoreCase))
                         {
-                            var valueField = valuableObject.GetType().GetField("dollarValueCurrent", BindingFlags.Public | BindingFlags.Instance);
-                            if (valueField != null)
-                            {
-                                try
-                                {
-                                    itemValue = Convert.ToInt32(valueField.GetValue(valuableObject));
-                                }
-                                catch (Exception e)
-                                {
-                                    Hax2.Log1($"Error reading 'dollarValueCurrent' for '{itemName}': {e.Message}. Defaulting to 0.");
-                                }
-                            }
-                        }
-
-                        string distanceText = "";
-                        if (showItemDistance && localPlayer != null)
-                        {
-                            float distance = Vector3.Distance(localPlayer.transform.position, itemPosition);
-                            distanceText = $" [{distance:F1}m]";
-                        }
-
-                        string nameText = showItemNames ? itemName : "";
-                        if (showItemDistance) nameText += distanceText;
-
-                        float labelWidth = 150f;
-                        float valueLabelHeight = valueStyle.CalcHeight(new GUIContent(itemValue.ToString() + "$"), labelWidth);
-                        float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameText), labelWidth);
-                        float totalHeight = nameLabelHeight + valueLabelHeight + 5f;
-                        float labelX = x - labelWidth / 2f;
-                        float labelY = y - totalHeight - 5f;
-
-                        if (!string.IsNullOrEmpty(nameText))
-                        {
-                            GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameText, nameStyle);
-                        }
-                        if (showItemValue && !isPlayerDeathHead)
-                        {
-                            GUI.Label(new Rect(labelX, labelY + nameLabelHeight + 2f, labelWidth, valueLabelHeight), itemValue.ToString() + "$", valueStyle);
-                        }
-
-                        if (draw3DItemEspBool)
-                        {
-                            Bounds bounds = GetActiveColliderBounds(transform.gameObject);
-                            CreateBoundsEdges(bounds, Color.yellow);
+                            itemName = itemName.Substring(0, itemName.Length - "(Clone)".Length).Trim();
                         }
                     }
+
+                    int itemValue = 0;
+                    if (!isPlayerDeathHead)
+                    {
+                        var valueField = valuableObject.GetType().GetField("dollarValueCurrent", BindingFlags.Public | BindingFlags.Instance);
+                        if (valueField != null)
+                        {
+                            try
+                            {
+                                itemValue = Convert.ToInt32(valueField.GetValue(valuableObject));
+                            }
+                            catch (Exception e)
+                            {
+                                Hax2.Log1($"Error reading 'dollarValueCurrent' for '{itemName}': {e.Message}. Defaulting to 0.");
+                            }
+                        }
+                    }
+
+                    // Set distance color
+                    Color distanceColor = isPlayerDeathHead ? Color.red : Color.yellow;
+
+                    string distanceText = "";
+                    if (showItemDistance && localPlayer != null)
+                    {
+                        float distance = Vector3.Distance(localPlayer.transform.position, itemPosition);
+                        distanceText = $" [{distance:F1}m]";
+                    }
+
+                    string nameText = showItemNames ? itemName : "";
+                    if (showItemDistance) nameText += distanceText;
+
+                    float labelWidth = 150f;
+                    float valueLabelHeight = valueStyle.CalcHeight(new GUIContent(itemValue.ToString() + "$"), labelWidth);
+                    float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameText), labelWidth);
+                    float totalHeight = nameLabelHeight + valueLabelHeight + 5f;
+                    float labelX = x - labelWidth / 2f;
+                    float labelY = y - totalHeight - 5f;
+
+                    // Draw Name (with distance included in the same label)
+                    if (!string.IsNullOrEmpty(nameText))
+                    {
+                        GUIStyle coloredNameStyle = new GUIStyle(nameStyle)
+                        {
+                            normal = { textColor = distanceColor }
+                        };
+
+                        GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameText, coloredNameStyle);
+                    }
+
+                    // Draw Item Value (if not DeadPlayerHead)
+                    if (showItemValue && !isPlayerDeathHead)
+                    {
+                        GUI.Label(new Rect(labelX, labelY + nameLabelHeight + 2f, labelWidth, valueLabelHeight), itemValue.ToString() + "$", valueStyle);
+                    }
+
+                    // Draw 3D Item ESP if enabled
+                    if (draw3DItemEspBool)
+                    {
+                        Bounds bounds = GetActiveColliderBounds(transform.gameObject);
+                        CreateBoundsEdges(bounds, Color.yellow);
+                    }
                 }
-	    }
-	
-            if (drawExtractionPointEspBool)
+            }
+        }
+
+        if (drawExtractionPointEspBool)
+        {
+            GUIStyle nameStyle = new GUIStyle(GUI.skin.label)
             {
-                GUIStyle nameStyle = new GUIStyle(GUI.skin.label)
-                {
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 14,
-                    fontStyle = FontStyle.Bold,
-                    wordWrap = true,
-                    border = new RectOffset(1, 1, 1, 1)
-                };
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 14,
+                fontStyle = FontStyle.Bold,
+            };
 
                 GUIStyle valueStyle = new GUIStyle(GUI.skin.label)
                 {
