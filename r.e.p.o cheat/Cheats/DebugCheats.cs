@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime; // Necessário para ReceiverGroup e RaiseEventOptions
@@ -260,12 +260,12 @@ namespace r.e.p.o_cheat
                     }
                 }
             }
-            else 
+            else
             {
                 var players = SemiFunc.PlayerGetList();
                 if (players != null && players.Count > 0)
                 {
-                    var player = players[0]; 
+                    var player = players[0];
                     var gameObjectProperty = player.GetType().GetProperty("gameObject", BindingFlags.Public | BindingFlags.Instance);
                     if (gameObjectProperty != null)
                     {
@@ -409,41 +409,41 @@ namespace r.e.p.o_cheat
                     fontStyle = FontStyle.Bold
                 };
             }
+
+            if (enemyStyle == null)
+            {
+                enemyStyle = new GUIStyle(GUI.skin.label)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    wordWrap = true,
+                    fontSize = 12,
+                    fontStyle = FontStyle.Bold
+                };
+            }
+
+            if (healthStyle == null)
+            {
+                healthStyle = new GUIStyle(GUI.skin.label)
+                {
+                    normal = { textColor = Color.green },
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = 12,
+                    fontStyle = FontStyle.Bold
+                };
+            }
+
+            if (distanceStyle == null)
+            {
+                distanceStyle = new GUIStyle(GUI.skin.label)
+                {
+                    normal = { textColor = Color.yellow },
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = 12,
+                    fontStyle = FontStyle.Bold
+                };
+            }
         }
 
-        if (enemyStyle == null)
-        {
-            enemyStyle = new (GUIStyle(GUI.skin.label)
-            {
-                alignment = TextAnchor.MiddleCenter,
-                wordWrap = true
-                fontSize = 12,
-                fontStyle = FontStyle.Bold
-            };
-        }
-
-        if (healthStyle == null)
-        {
-            healthStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = Color.green },
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 12,
-                fontStyle = FontStyle.Bold
-            };
-        }
-    
-        if (distanceStyle == null)
-        {
-            distanceStyle = new GUIStyle(GUI.skin.label)
-            {
-                normal = { textColor = Color.yellow },
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 12,
-                fontStyle = FontStyle.Bold
-            };
-        }
-        
         private static void CreateBoundsEdges(Bounds bounds, Color color)
         {
             Vector3[] vertices = new Vector3[8];
@@ -684,111 +684,112 @@ namespace r.e.p.o_cheat
                             {
                                 itemName = itemName.Substring("Valuable".Length).Trim();
                             }
-                        if (itemName.EndsWith("(Clone)", StringComparison.OrdinalIgnoreCase))
-                        {
-                            itemName = itemName.Substring(0, itemName.Length - "(Clone)".Length).Trim();
-                        }
-                    }
-
-                    int itemValue = 0;
-                    if (!isPlayerDeathHead)
-                    {
-                        var valueField = valuableObject.GetType().GetField("dollarValueCurrent", BindingFlags.Public | BindingFlags.Instance);
-                        if (valueField != null)
-                        {
-                            try
+                            if (itemName.EndsWith("(Clone)", StringComparison.OrdinalIgnoreCase))
                             {
-                                itemValue = Convert.ToInt32(valueField.GetValue(valuableObject));
-                            }
-                            catch (Exception e)
-                            {
-                                Hax2.Log1($"Error reading 'dollarValueCurrent' for '{itemName}': {e.Message}. Defaulting to 0.");
+                                itemName = itemName.Substring(0, itemName.Length - "(Clone)".Length).Trim();
                             }
                         }
+
+                        int itemValue = 0;
+                        if (!isPlayerDeathHead)
+                        {
+                            var valueField = valuableObject.GetType().GetField("dollarValueCurrent", BindingFlags.Public | BindingFlags.Instance);
+                            if (valueField != null)
+                            {
+                                try
+                                {
+                                    itemValue = Convert.ToInt32(valueField.GetValue(valuableObject));
+                                }
+                                catch (Exception e)
+                                {
+                                    Hax2.Log1($"Error reading 'dollarValueCurrent' for '{itemName}': {e.Message}. Defaulting to 0.");
+                                }
+                            }
+                        }
+
+                        // Set distance color
+                        Color distanceColor = isPlayerDeathHead ? Color.red : Color.yellow;
+                        nameStyle.normal.textColor = distanceColor;
+
+                        string distanceText = "";
+                        if (showItemDistance && localPlayer != null)
+                        {
+                            float distance = Vector3.Distance(localPlayer.transform.position, itemPosition);
+                            distanceText = $" [{distance:F1}m]";
+                        }
+
+                        string nameText = showItemNames ? itemName : "";
+                        if (showItemDistance) nameText += distanceText;
+
+                        float labelWidth = 150f;
+                        float valueLabelHeight = valueStyle.CalcHeight(new GUIContent(itemValue.ToString() + "$"), labelWidth);
+                        float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameText), labelWidth);
+                        float totalHeight = nameLabelHeight + valueLabelHeight + 5f;
+                        float labelX = x - labelWidth / 2f;
+                        float labelY = y - totalHeight - 5f;
+
+                        // Draw Name (with distance included in the same label)
+                        if (!string.IsNullOrEmpty(nameText))
+                        {
+                            GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameText, nameStyle);
+                        }
+
+                        // Draw Item Value (if not DeadPlayerHead)
+                        if (showItemValue && !isPlayerDeathHead)
+                        {
+                            GUI.Label(new Rect(labelX, labelY + nameLabelHeight + 2f, labelWidth, valueLabelHeight), itemValue.ToString() + "$", valueStyle);
+                        }
+
+                        // Draw 3D Item ESP if enabled
+                        if (draw3DItemEspBool)
+                        {
+                            Bounds bounds = GetActiveColliderBounds(transform.gameObject);
+                            CreateBoundsEdges(bounds, Color.yellow);
+                        }
+
+                        nameStyle.normal.textColor = originalColor;
                     }
-
-                    // Set distance color
-                    Color distanceColor = isPlayerDeathHead ? Color.red : Color.yellow;
-                    nameStyle.normal.textColor = distanceColor;
-
-                    string distanceText = "";
-                    if (showItemDistance && localPlayer != null)
-                    {
-                        float distance = Vector3.Distance(localPlayer.transform.position, itemPosition);
-                        distanceText = $" [{distance:F1}m]";
-                    }
-
-                    string nameText = showItemNames ? itemName : "";
-                    if (showItemDistance) nameText += distanceText;
-
-                    float labelWidth = 150f;
-                    float valueLabelHeight = valueStyle.CalcHeight(new GUIContent(itemValue.ToString() + "$"), labelWidth);
-                    float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameText), labelWidth);
-                    float totalHeight = nameLabelHeight + valueLabelHeight + 5f;
-                    float labelX = x - labelWidth / 2f;
-                    float labelY = y - totalHeight - 5f;
-
-                    // Draw Name (with distance included in the same label)
-                    if (!string.IsNullOrEmpty(nameText))
-                    {
-                        GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameText, coloredNameStyle);
-                    }
-
-                    // Draw Item Value (if not DeadPlayerHead)
-                    if (showItemValue && !isPlayerDeathHead)
-                    {
-                        GUI.Label(new Rect(labelX, labelY + nameLabelHeight + 2f, labelWidth, valueLabelHeight), itemValue.ToString() + "$", valueStyle);
-                    }
-
-                    // Draw 3D Item ESP if enabled
-                    if (draw3DItemEspBool)
-                    {
-                        Bounds bounds = GetActiveColliderBounds(transform.gameObject);
-                        CreateBoundsEdges(bounds, Color.yellow);
-                    }
-                    
-                    nameStyle.normal.textColor = originalColor;
                 }
             }
-        }
 
-        if (drawExtractionPointEspBool)
-        {
-            foreach (var epData in extractionPointList)
+            if (drawExtractionPointEspBool)
             {
-                if (epData.ExtractionPoint == null || !epData.ExtractionPoint.gameObject.activeInHierarchy) continue;
-
-                Vector3 screenPos = cachedCamera.WorldToScreenPoint(epData.CachedPosition);
-
-                if (screenPos.z > 0 && screenPos.x > 0 && screenPos.x < Screen.width && screenPos.y > 0 && screenPos.y < Screen.height)
+                foreach (var epData in extractionPointList)
                 {
-                    float x = screenPos.x * scaleX;
-                    float y = Screen.height - (screenPos.y * scaleY);
+                    if (epData.ExtractionPoint == null || !epData.ExtractionPoint.gameObject.activeInHierarchy) continue;
 
-                    string pointName = "Extraction Point";
-                    string stateText = $" ({epData.CachedState})";
-                    string distanceText = showExtractionDistance && localPlayer != null ? $"{Vector3.Distance(localPlayer.transform.position, epData.CachedPosition):F1}m" : "";
+                    Vector3 screenPos = cachedCamera.WorldToScreenPoint(epData.CachedPosition);
 
-                    Color originalColor = nameStyle.normal.textColor;
-
-                    nameStyle.normal.textColor = epData.CachedState == "Active" ? Color.green : (epData.CachedState == "Idle" ? Color.red : Color.cyan);
-
-                    string nameFullText = showExtractionNames ? pointName + stateText : "";
-                    if (showExtractionDistance) nameFullText += " " + distanceText;
-
-                    float labelWidth = 150f;
-                    float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameFullText), labelWidth);
-                    float totalHeight = nameLabelHeight;
-                    float labelX = x - labelWidth / 2f;
-                    float labelY = y - totalHeight - 5f;
-
-                    if (!string.IsNullOrEmpty(nameFullText))
+                    if (screenPos.z > 0 && screenPos.x > 0 && screenPos.x < Screen.width && screenPos.y > 0 && screenPos.y < Screen.height)
                     {
-                        GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameFullText, nameStyle);
-                    }
+                        float x = screenPos.x * scaleX;
+                        float y = Screen.height - (screenPos.y * scaleY);
 
-                    nameStyle.normal.textColor = originalColor;
-                    
+                        string pointName = "Extraction Point";
+                        string stateText = $" ({epData.CachedState})";
+                        string distanceText = showExtractionDistance && localPlayer != null ? $"{Vector3.Distance(localPlayer.transform.position, epData.CachedPosition):F1}m" : "";
+
+                        Color originalColor = nameStyle.normal.textColor;
+
+                        nameStyle.normal.textColor = epData.CachedState == "Active" ? Color.green : (epData.CachedState == "Idle" ? Color.red : Color.cyan);
+
+                        string nameFullText = showExtractionNames ? pointName + stateText : "";
+                        if (showExtractionDistance) nameFullText += " " + distanceText;
+
+                        float labelWidth = 150f;
+                        float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameFullText), labelWidth);
+                        float totalHeight = nameLabelHeight;
+                        float labelX = x - labelWidth / 2f;
+                        float labelY = y - totalHeight - 5f;
+
+                        if (!string.IsNullOrEmpty(nameFullText))
+                        {
+                            GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameFullText, nameStyle);
+                        }
+
+                        nameStyle.normal.textColor = originalColor;
+
+                    }
                 }
             }
 
@@ -869,72 +870,71 @@ namespace r.e.p.o_cheat
                     }
 
                     nameStyle.normal.textColor = originalNameColor;
-                    
+
                 }
             }
         }
-
         private static int GetPlayerHealth(object player)
-        {
-            try
             {
-                var playerHealthField = player.GetType().GetField("playerHealth", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if (playerHealthField == null) return 100;
-
-                var playerHealthInstance = playerHealthField.GetValue(player);
-                if (playerHealthInstance == null) return 100;
-
-                var healthField = playerHealthInstance.GetType().GetField("health", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if (healthField == null) return 100;
-
-                return (int)healthField.GetValue(playerHealthInstance);
-            }
-            catch (Exception e)
-            {
-                Hax2.Log1($"Erro ao obter vida do jogador: {e.Message}");
-                return 100;
-            }
-        }
-
-
-        public static void KillAllEnemies()
-        {
-            Hax2.Log1("Tentando matar todos os inimigos");
-
-            foreach (var enemyInstance in enemyList)
-            {
-                if (enemyInstance == null) continue;
-
                 try
                 {
-                    var healthField = enemyInstance.GetType().GetField("Health", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                    if (healthField != null)
-                    {
-                        var healthComponent = healthField.GetValue(enemyInstance);
-                        if (healthComponent != null)
-                        {
-                            var healthType = healthComponent.GetType();
-                            var hurtMethod = healthType.GetMethod("Hurt", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                            if (hurtMethod != null)
-                            {
-                                hurtMethod.Invoke(healthComponent, new object[] { 9999, Vector3.zero });
-                                Hax2.Log1($"Inimigo ferido com 9999 de dano via Hurt");
-                            }
-                            else
-                                Hax2.Log1("Método 'Hurt' não encontrado em EnemyHealth");
-                        }
-                        else
-                            Hax2.Log1("Componente EnemyHealth é nulo");
-                    }
-                    else
-                        Hax2.Log1("Campo 'Health' não encontrado em Enemy");
+                    var playerHealthField = player.GetType().GetField("playerHealth", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (playerHealthField == null) return 100;
+
+                    var playerHealthInstance = playerHealthField.GetValue(player);
+                    if (playerHealthInstance == null) return 100;
+
+                    var healthField = playerHealthInstance.GetType().GetField("health", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (healthField == null) return 100;
+
+                    return (int)healthField.GetValue(playerHealthInstance);
                 }
                 catch (Exception e)
                 {
-                    Hax2.Log1($"Erro ao matar inimigo: {e.Message}");
+                    Hax2.Log1($"Erro ao obter vida do jogador: {e.Message}");
+                    return 100;
                 }
             }
-            UpdateEnemyList();
+
+
+            public static void KillAllEnemies()
+            {
+                Hax2.Log1("Tentando matar todos os inimigos");
+
+                foreach (var enemyInstance in enemyList)
+                {
+                    if (enemyInstance == null) continue;
+
+                    try
+                    {
+                        var healthField = enemyInstance.GetType().GetField("Health", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (healthField != null)
+                        {
+                            var healthComponent = healthField.GetValue(enemyInstance);
+                            if (healthComponent != null)
+                            {
+                                var healthType = healthComponent.GetType();
+                                var hurtMethod = healthType.GetMethod("Hurt", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                                if (hurtMethod != null)
+                                {
+                                    hurtMethod.Invoke(healthComponent, new object[] { 9999, Vector3.zero });
+                                    Hax2.Log1($"Inimigo ferido com 9999 de dano via Hurt");
+                                }
+                                else
+                                    Hax2.Log1("Método 'Hurt' não encontrado em EnemyHealth");
+                            }
+                            else
+                                Hax2.Log1("Componente EnemyHealth é nulo");
+                        }
+                        else
+                            Hax2.Log1("Campo 'Health' não encontrado em Enemy");
+                    }
+                    catch (Exception e)
+                    {
+                        Hax2.Log1($"Erro ao matar inimigo: {e.Message}");
+                    }
+                }
+                UpdateEnemyList();
+            }
         }
     }
-}
