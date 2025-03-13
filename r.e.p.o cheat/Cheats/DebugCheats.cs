@@ -42,7 +42,7 @@ namespace r.e.p.o_cheat
         public static bool showItemNames = true;
         public static bool showItemValue = true;
         public static bool showItemDistance = false;
-        public static bool showPlayerDeathHeads = true
+        public static bool showPlayerDeathHeads = true;
         public static bool showExtractionNames = true;
         public static bool showExtractionDistance = true;
         public static bool showPlayerNames = true;
@@ -642,8 +642,8 @@ namespace r.e.p.o_cheat
                 {
                     if (valuableObject == null) continue;
 
-                    bool isPlayerDeathHead = valuableObject.GetType().Name == "PlayerDeathHead"
-                    if (!DebugCheats.showPlayerDeathHeads && isPlayerDeathhead) continue;
+                    bool isPlayerDeathHead = valuableObject.GetType().Name == "PlayerDeathHead";
+                    if (!DebugCheats.showPlayerDeathHeads && isPlayerDeathHead) continue;
 
                     var transform = valuableObject.GetType().GetProperty("transform", BindingFlags.Public | BindingFlags.Instance)?.GetValue(valuableObject) as Transform;
                     if (transform == null || !transform.gameObject.activeInHierarchy) continue;
