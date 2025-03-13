@@ -31,6 +31,11 @@ namespace r.e.p.o_cheat
         public static bool draw3DItemEspBool = false;
         public static bool draw3DPlayerEspBool = false;
         public static bool drawExtractionPointEspBool = false;
+        public static GUIStyle nameStyle;
+        public static GUIStyle valueStyle;
+        public static GUIStyle enemyStyle;
+        public static GUIStyle healthStyle;
+        public static GUIStyle distanceStyle;
 
         public static bool showEnemyNames = true;
         public static bool showEnemyDistance = true;
@@ -379,6 +384,66 @@ namespace r.e.p.o_cheat
             RectOutlined(x - width / 2f, y - height, width, height, text, thickness);
         }
 
+        public static void InitializeStyles()
+        {
+            if (nameStyle == null)
+            {
+                nameStyle = new GUIStyle(GUI.skin.label)
+                {
+                    normal = { textColor = Color.yellow },
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = 14,
+                    fontStyle = FontStyle.Bold,
+                    wordWrap = true,
+                    border = new RectOffset(1, 1, 1, 1)
+                };
+            }
+
+            if (valueStyle == null)
+            {
+                valueStyle = new GUIStyle(GUI.skin.label)
+                {
+                    normal = { textColor = Color.green },
+                    alignment = TextAnchor.MiddleCenter,
+                    fontSize = 12,
+                    fontStyle = FontStyle.Bold
+                };
+            }
+        }
+
+        if (enemyStyle == null)
+        {
+            enemyStyle = new (GUIStyle(GUI.skin.label)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true
+                fontSize = 12,
+                fontStyle = FontStyle.Bold
+            };
+        }
+
+        if (healthStyle == null)
+        {
+            healthStyle = new GUIStyle(GUI.skin.label)
+            {
+                normal = { textColor = Color.green },
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 12,
+                fontStyle = FontStyle.Bold
+            };
+        }
+    
+        if (distanceStyle == null)
+        {
+            distanceStyle = new GUIStyle(GUI.skin.label)
+            {
+                normal = { textColor = Color.yellow },
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 12,
+                fontStyle = FontStyle.Bold
+            };
+        }
+        
         private static void CreateBoundsEdges(Bounds bounds, Color color)
         {
             Vector3[] vertices = new Vector3[8];
@@ -475,6 +540,7 @@ namespace r.e.p.o_cheat
         }
         public static void DrawESP()
         {
+            InitializeStyles();
             if (!drawEspBool && !drawItemEspBool && !drawExtractionPointEspBool && !drawPlayerEspBool && !draw3DPlayerEspBool && !draw3DItemEspBool) return;
             if (localPlayer == null)
             {
@@ -508,14 +574,6 @@ namespace r.e.p.o_cheat
 
             if (drawEspBool)
             {
-                GUIStyle enemyStyle = new GUIStyle(GUI.skin.label)
-                {
-                    alignment = TextAnchor.MiddleCenter,
-                    wordWrap = true,
-                    fontSize = 12,
-                    fontStyle = FontStyle.Bold
-                };
-
                 foreach (var enemyInstance in enemyList)
                 {
                     if (enemyInstance == null || !enemyInstance.gameObject.activeInHierarchy || enemyInstance.CenterTransform == null) continue;
@@ -579,24 +637,6 @@ namespace r.e.p.o_cheat
 
             if (drawItemEspBool)
             {
-                GUIStyle nameStyle = new GUIStyle(GUI.skin.label)
-                {
-                    normal = { textColor = Color.yellow },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 14,
-                    fontStyle = FontStyle.Bold,
-                    wordWrap = true,
-                    border = new RectOffset(1, 1, 1, 1)
-                };
-
-                GUIStyle valueStyle = new GUIStyle(GUI.skin.label)
-                {
-                    normal = { textColor = Color.green },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 12,
-                    fontStyle = FontStyle.Bold
-                };
-
                 foreach (var valuableObject in valuableObjects)
                 {
                     if (valuableObject == null) continue;
@@ -614,6 +654,8 @@ namespace r.e.p.o_cheat
 
                         string itemName;
                         bool isPlayerDeathHead = valuableObject.GetType().Name == "PlayerDeathHead";
+
+                        Color originalColor = nameStyle.normal.textColor;
 
                         if (isPlayerDeathHead)
                         {
@@ -667,6 +709,7 @@ namespace r.e.p.o_cheat
 
                     // Set distance color
                     Color distanceColor = isPlayerDeathHead ? Color.red : Color.yellow;
+                    nameStyle.normal.textColor = distanceColor;
 
                     string distanceText = "";
                     if (showItemDistance && localPlayer != null)
@@ -688,11 +731,6 @@ namespace r.e.p.o_cheat
                     // Draw Name (with distance included in the same label)
                     if (!string.IsNullOrEmpty(nameText))
                     {
-                        GUIStyle coloredNameStyle = new GUIStyle(nameStyle)
-                        {
-                            normal = { textColor = distanceColor }
-                        };
-
                         GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameText, coloredNameStyle);
                     }
 
@@ -708,88 +746,54 @@ namespace r.e.p.o_cheat
                         Bounds bounds = GetActiveColliderBounds(transform.gameObject);
                         CreateBoundsEdges(bounds, Color.yellow);
                     }
+                    
+                    nameStyle.normal.textColor = originalColor;
                 }
             }
         }
 
         if (drawExtractionPointEspBool)
         {
-            GUIStyle nameStyle = new GUIStyle(GUI.skin.label)
+            foreach (var epData in extractionPointList)
             {
-                alignment = TextAnchor.MiddleCenter,
-                fontSize = 14,
-                fontStyle = FontStyle.Bold,
-            };
+                if (epData.ExtractionPoint == null || !epData.ExtractionPoint.gameObject.activeInHierarchy) continue;
 
-                GUIStyle valueStyle = new GUIStyle(GUI.skin.label)
+                Vector3 screenPos = cachedCamera.WorldToScreenPoint(epData.CachedPosition);
+
+                if (screenPos.z > 0 && screenPos.x > 0 && screenPos.x < Screen.width && screenPos.y > 0 && screenPos.y < Screen.height)
                 {
-                    normal = { textColor = Color.white },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 12,
-                    fontStyle = FontStyle.Bold
-                };
+                    float x = screenPos.x * scaleX;
+                    float y = Screen.height - (screenPos.y * scaleY);
 
-                foreach (var epData in extractionPointList)
-                {
-                    if (epData.ExtractionPoint == null || !epData.ExtractionPoint.gameObject.activeInHierarchy) continue;
+                    string pointName = "Extraction Point";
+                    string stateText = $" ({epData.CachedState})";
+                    string distanceText = showExtractionDistance && localPlayer != null ? $"{Vector3.Distance(localPlayer.transform.position, epData.CachedPosition):F1}m" : "";
 
-                    Vector3 screenPos = cachedCamera.WorldToScreenPoint(epData.CachedPosition);
+                    Color originalColor = nameStyle.normal.textColor;
 
-                    if (screenPos.z > 0 && screenPos.x > 0 && screenPos.x < Screen.width && screenPos.y > 0 && screenPos.y < Screen.height)
+                    nameStyle.normal.textColor = epData.CachedState == "Active" ? Color.green : (epData.CachedState == "Idle" ? Color.red : Color.cyan);
+
+                    string nameFullText = showExtractionNames ? pointName + stateText : "";
+                    if (showExtractionDistance) nameFullText += " " + distanceText;
+
+                    float labelWidth = 150f;
+                    float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameFullText), labelWidth);
+                    float totalHeight = nameLabelHeight;
+                    float labelX = x - labelWidth / 2f;
+                    float labelY = y - totalHeight - 5f;
+
+                    if (!string.IsNullOrEmpty(nameFullText))
                     {
-                        float x = screenPos.x * scaleX;
-                        float y = Screen.height - (screenPos.y * scaleY);
-
-                        string pointName = "Extraction Point";
-                        string stateText = $" ({epData.CachedState})";
-                        string distanceText = showExtractionDistance && localPlayer != null ? $"{Vector3.Distance(localPlayer.transform.position, epData.CachedPosition):F1}m" : "";
-
-                        nameStyle.normal.textColor = epData.CachedState == "Active" ? Color.green : (epData.CachedState == "Idle" ? Color.red : Color.cyan);
-
-                        string nameFullText = showExtractionNames ? pointName + stateText : "";
-                        if (showExtractionDistance) nameFullText += " " + distanceText;
-
-                        float labelWidth = 150f;
-                        float nameLabelHeight = nameStyle.CalcHeight(new GUIContent(nameFullText), labelWidth);
-                        float totalHeight = nameLabelHeight;
-                        float labelX = x - labelWidth / 2f;
-                        float labelY = y - totalHeight - 5f;
-
-                        if (!string.IsNullOrEmpty(nameFullText))
-                        {
-                            GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameFullText, nameStyle);
-                        }
+                        GUI.Label(new Rect(labelX, labelY, labelWidth, nameLabelHeight), nameFullText, nameStyle);
                     }
+
+                    nameStyle.normal.textColor = originalColor;
+                    
                 }
             }
 
             if (drawPlayerEspBool || draw3DPlayerEspBool)
             {
-                GUIStyle nameStyle = new GUIStyle(GUI.skin.label)
-                {
-                    normal = { textColor = Color.white },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 14,
-                    fontStyle = FontStyle.Bold,
-                    wordWrap = true,
-                    border = new RectOffset(1, 1, 1, 1)
-                };
-
-                GUIStyle healthStyle = new GUIStyle(GUI.skin.label)
-                {
-                    normal = { textColor = Color.green },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 12,
-                    fontStyle = FontStyle.Bold
-                };
-
-                GUIStyle distanceStyle = new GUIStyle(GUI.skin.label)
-                {
-                    normal = { textColor = Color.yellow },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontSize = 12,
-                    fontStyle = FontStyle.Bold
-                };
 
                 foreach (var playerData in playerDataList)
                 {
@@ -838,6 +842,9 @@ namespace r.e.p.o_cheat
                         Box(x, y, width, height, texture2, 2f);
                     }
 
+                    Color originalNameColor = nameStyle.normal.textColor;
+                    nameStyle.normal.textColor = Color.white;
+
                     int health = playerHealthCache.ContainsKey(playerData.PhotonView.ViewID) ? playerHealthCache[playerData.PhotonView.ViewID] : 100;
                     string healthText = $"HP: {health}";
                     string distanceText = showPlayerDistance && localPlayer != null ? $"{distanceToPlayer:F1}m" : "";
@@ -860,6 +867,9 @@ namespace r.e.p.o_cheat
                     {
                         GUI.Label(new Rect(labelX, labelY + nameHeight + 2f, labelWidth, healthHeight), healthText, healthStyle);
                     }
+
+                    nameStyle.normal.textColor = originalNameColor;
+                    
                 }
             }
         }
